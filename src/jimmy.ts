@@ -112,6 +112,12 @@ export default class Jimmy {
         this.send(toggle);
     }
 
+    toggleTimer() {
+        console.log('toggling Timer ...')
+        const toggle = [0x05, 0x00];
+        this.send(toggle);
+    }
+
     private send(cmd: number[]) {
         this.commandCharacteristic.writeValueWithResponse(new Uint8Array(cmd)).catch(async (e: Event) => {
             console.log('FAILED: ' + e);

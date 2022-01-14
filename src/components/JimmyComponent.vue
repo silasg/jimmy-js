@@ -9,6 +9,7 @@
       <button v-on:click="tare">Tare</button>
       <button v-on:click="toggleUnit">Toggle Unit</button>
       <button v-on:click="toggleMode">Toggle Mode</button>
+      <button v-on:click="toggleTimer">Toggle Timer</button>
     </div>
   </div>
 </template>
@@ -31,6 +32,7 @@ export default class JimmyComponent extends Vue {
   public tare() { this.scale.tare() }
   public toggleUnit() { this.scale.toggleUnit() }
   public toggleMode() { this.scale.toggleMode() }
+  public toggleTimer() { this.scale.toggleTimer() }
 
   disconnect (): void { this.scale.disconnect() }
   connect (): void {
