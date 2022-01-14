@@ -43,7 +43,23 @@
     "parserOptions": {
       "ecmaVersion": 2020
     },
-    "rules": {}
+    "rules": {
+      "indent": "off",
+      "space-before-function-paren": "off",
+      "quotes": "warn",
+      "no-trailing-spaces": "warn",
+      "semi": "warn",
+      "no-tabs": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "camelcase": "warn",
+      "space-infix-ops": "warn",
+      "space-unary-ops": "warn",
+      "curly": "warn",
+      "eqeqeq": "error",
+      "no-var": "error",
+      "padded-blocks": "off",
+      "no-useless-constructor": "off"
+    }
   },
   "browserslist": [
     "> 1%",
