@@ -4,6 +4,8 @@
     <div>
       <button v-on:click="connect">Connect to Jimmy scale</button>
       <h3>{{ weight }}</h3>
+      <button v-on:click="tare">Tare</button>
+      <button v-on:click="toggleUnit">Toggle Unit</button>
     </div>
   </div>
 </template>
@@ -23,6 +25,9 @@ export default class JimmyComponent extends Vue {
   public get weight () : string {
     return this.scale.weightFormatted
   }
+
+  public tare() { this.scale.tare() }
+  public toggleUnit() { this.scale.toggleUnit() }
 
   connect (): void {
     const bt = (navigator as any)?.bluetooth
@@ -49,7 +54,7 @@ export default class JimmyComponent extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+button {
+  margin: 5px;
 }
 </style>
