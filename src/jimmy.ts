@@ -16,9 +16,9 @@ export default class Jimmy {
     private weightCharacteristic: BluetoothCharacteristic;
     private commandCharacteristic: BluetoothCharacteristic;
 
-    static suuid_hiroiajimmy = "06C31822-8682-4744-9211-FEBC93E3BECE";
-	static cuuid_hiroiajimmy_cmd = "06C31823-8682-4744-9211-FEBC93E3BECE";
-	static cuuid_hiroiajimmy_status = "06C31824-8682-4744-9211-FEBC93E3BECE";
+    static suuid_hiroiajimmy = "06c31822-8682-4744-9211-febc93e3bece";
+	static cuuid_hiroiajimmy_cmd = "06c31823-8682-4744-9211-febc93e3bece";
+	static cuuid_hiroiajimmy_status = "06c31824-8682-4744-9211-febc93e3bece";
 
     async connect(device: Device) {
         this.device = device;
@@ -27,16 +27,16 @@ export default class Jimmy {
         const server = await this.device?.gatt.connect();
 
         console.log('Getting Weight Service ...');
-        const service = await server.getPrimaryService(Jimmy.suuid_hiroiajimmy.toLowerCase()).catch(async (e: Event) => {
+        const service = await server.getPrimaryService(Jimmy.suuid_hiroiajimmy).catch(async (e: Event) => {
             console.log('FAILED: ' + e);
             return null;
         });
         console.log('Getting Weight Characteristic ...');
-        this.weightCharacteristic = await service.getCharacteristic(Jimmy.cuuid_hiroiajimmy_status.toLowerCase()).catch(async (e: Event) => {
+        this.weightCharacteristic = await service.getCharacteristic(Jimmy.cuuid_hiroiajimmy_status).catch(async (e: Event) => {
             console.log('FAILED: ' + e);
             return null;
         });
-        this.commandCharacteristic = await service.getCharacteristic(Jimmy.cuuid_hiroiajimmy_cmd.toLowerCase()).catch(async (e: Event) => {
+        this.commandCharacteristic = await service.getCharacteristic(Jimmy.cuuid_hiroiajimmy_cmd).catch(async (e: Event) => {
             console.log('FAILED: ' + e);
             return null;
         });
@@ -95,23 +95,18 @@ export default class Jimmy {
 
     tare() {
         console.log('taring ...')
-        const tare = new Uint8Array(new ArrayBuffer(2));
-        tare[0] = 0x07;
-        tare[1] = 0x00;
-        
-        this.commandCharacteristic.writeValueWithResponse(tare).catch(async (e: Event) => {
-            console.log('FAILED: ' + e);
-            return null;
-        });
+        const tare = [0x07, 0x00];
+        this.send(tare);
     }
 
     toggleUnit() {
         console.log('toggling Unit ...')
-        const toggle = new Uint8Array(new ArrayBuffer(2));
-        toggle[0] = 0x0b;
-        toggle[1] = 0x00;
-        
-        this.commandCharacteristic.writeValueWithResponse(toggle).catch(async (e: Event) => {
+        const toggle = [0x0b, 0x00];
+        this.send(toggle);
+    }
+
+    private send(cmd: number[]) {
+        this.commandCharacteristic.writeValueWithResponse(new Uint8Array(cmd)).catch(async (e: Event) => {
             console.log('FAILED: ' + e);
             return null;
         });
