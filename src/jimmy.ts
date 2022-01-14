@@ -3,11 +3,13 @@ type Device = any;
 type BluetoothCharacteristic = any;
 
 export enum WeightUnit { GRAM = 'g', OUNCE = 'oz' }
+export enum WeightMode { SCALE_ONLY = 0x01, TIMER_SCALE = 0x02, POUR_OVER = 0x03, ESPRESSO_1 = 0x04, ESPRESSO_2 = 0x05, ESPRESSO_3 = 0x06 }
 
 export default class Jimmy {
    
     private weight?: number = undefined;
     private unit?: WeightUnit = undefined;
+    private mode?: WeightMode = undefined;
 
     private device?: Device = undefined;
 
@@ -61,6 +63,12 @@ export default class Jimmy {
         return `${this.weight} ${this.unit}`
     }    
 
+    public get modeFormatted() : string {
+        if (this.mode === undefined) return '-'
+        
+        return `${WeightMode[this.mode]}`
+    }    
+
     notification_callback(event: Event) {
         const buf = new Uint8Array(event.target.value.buffer);
         const mode = buf[0];
@@ -74,13 +82,15 @@ export default class Jimmy {
 
         if (mode > 0x08) {
             this.unit = WeightUnit.OUNCE;
-            this.weight = weight / 1000;  
+            this.weight = weight / 1000;
+            this.mode = (mode - 0x08)
         } else {
             this.unit = WeightUnit.GRAM;
-            this.weight = weight / 10;  
+            this.weight = weight / 10;
+            this.mode = mode;
         }
 
-        // console.log(`w: ${this.weight} ${this.unit}`);
+         // console.log(`m: ${mode} w: ${this.weightFormatted}`);
     }
 
     tare() {

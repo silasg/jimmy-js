@@ -5,6 +5,7 @@
       <button v-on:click="connect">Connect to Jimmy scale</button>
       <button v-on:click="disconnect">Disconnect</button>
       <h3>{{ weight }}</h3>
+      <p>Mode: {{ mode }}</p>
       <button v-on:click="tare">Tare</button>
       <button v-on:click="toggleUnit">Toggle Unit</button>
     </div>
@@ -23,9 +24,8 @@ export default class JimmyComponent extends Vue {
   title!: string
   private scale = new Jimmy();
 
-  public get weight () : string {
-    return this.scale.weightFormatted
-  }
+  public get weight () : string { return this.scale.weightFormatted }
+  public get mode () : string { return this.scale.modeFormatted }
 
   public tare() { this.scale.tare() }
   public toggleUnit() { this.scale.toggleUnit() }
