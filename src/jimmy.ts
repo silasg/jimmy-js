@@ -55,6 +55,7 @@ export default class Jimmy {
         this.device = undefined;
         this.weight = undefined;
         this.unit = undefined;
+        this.mode = undefined;
     }
 
     public get weightFormatted() : string {
