@@ -1,5 +1,9 @@
 # jimmy-js
+JavaScript/TypeScript library for the Hiroia Jimmy smart scale
 
+As of 2022-01 only Chrome browsers support connecting to Bluetooth devices liek the Jimmy scale. 
+
+For further development, I recommend analyzing Bluetooth communication between an iOS device and the scale following this guide: https://www.bluetooth.com/blog/a-new-way-to-debug-iosbluetooth-applications/
 ## Project setup
 ```
 yarn install
@@ -19,6 +23,3 @@ yarn build
 ```
 yarn lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
