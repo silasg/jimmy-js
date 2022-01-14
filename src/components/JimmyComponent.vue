@@ -8,6 +8,7 @@
       <p>Mode: {{ mode }}</p>
       <button v-on:click="tare">Tare</button>
       <button v-on:click="toggleUnit">Toggle Unit</button>
+      <button v-on:click="toggleMode">Toggle Mode</button>
     </div>
   </div>
 </template>
@@ -29,6 +30,7 @@ export default class JimmyComponent extends Vue {
 
   public tare() { this.scale.tare() }
   public toggleUnit() { this.scale.toggleUnit() }
+  public toggleMode() { this.scale.toggleMode() }
 
   disconnect (): void { this.scale.disconnect() }
   connect (): void {

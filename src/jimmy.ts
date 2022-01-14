@@ -106,6 +106,12 @@ export default class Jimmy {
         this.send(toggle);
     }
 
+    toggleMode() {
+        console.log('toggling Mode ...')
+        const toggle = [0x04, 0x00];
+        this.send(toggle);
+    }
+
     private send(cmd: number[]) {
         this.commandCharacteristic.writeValueWithResponse(new Uint8Array(cmd)).catch(async (e: Event) => {
             console.log('FAILED: ' + e);
