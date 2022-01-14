@@ -3,6 +3,7 @@
     <h1>{{ title }}</h1>
     <div>
       <button v-on:click="connect">Connect to Jimmy scale</button>
+      <button v-on:click="disconnect">Disconnect</button>
       <h3>{{ weight }}</h3>
       <button v-on:click="tare">Tare</button>
       <button v-on:click="toggleUnit">Toggle Unit</button>
@@ -29,6 +30,7 @@ export default class JimmyComponent extends Vue {
   public tare() { this.scale.tare() }
   public toggleUnit() { this.scale.toggleUnit() }
 
+  disconnect (): void { this.scale.disconnect() }
   connect (): void {
     const bt = (navigator as any)?.bluetooth
 

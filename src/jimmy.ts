@@ -7,7 +7,9 @@ export enum WeightUnit { GRAM = 'g', OUNCE = 'oz' }
 export default class Jimmy {
    
     private weight?: number = undefined;
-    private unit = WeightUnit.GRAM;
+    private unit?: WeightUnit = undefined;
+
+    private device?: Device = undefined;
 
     private weightCharacteristic: BluetoothCharacteristic;
     private commandCharacteristic: BluetoothCharacteristic;
@@ -17,8 +19,10 @@ export default class Jimmy {
 	static cuuid_hiroiajimmy_status = "06C31824-8682-4744-9211-FEBC93E3BECE";
 
     async connect(device: Device) {
+        this.device = device;
+
         console.log('Connecting to GATT Server ...');
-        const server = await device.gatt.connect();
+        const server = await this.device?.gatt.connect();
 
         console.log('Getting Weight Service ...');
         const service = await server.getPrimaryService(Jimmy.suuid_hiroiajimmy.toLowerCase()).catch(async (e: Event) => {
@@ -42,6 +46,13 @@ export default class Jimmy {
             console.log('FAILED: ' + e);
             return null;
         });
+    }
+
+    async disconnect() {
+        await this.device?.gatt.disconnect();
+        this.device = undefined;
+        this.weight = undefined;
+        this.unit = undefined;
     }
 
     public get weightFormatted() : string {
