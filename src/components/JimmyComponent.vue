@@ -10,13 +10,15 @@
       <button v-on:click="toggleUnit">Toggle Unit</button>
       <button v-on:click="toggleMode">Toggle Mode</button>
       <button v-on:click="toggleTimer">Toggle Timer</button>
+      <button v-on:click="setGramm">Set Gramm</button>
+      <button v-on:click="setTimerMode">Set Timer Mode</button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component'
-import Jimmy from '@/jimmy'
+import Jimmy, { WeightMode, WeightUnit } from '@/jimmy'
 @Options({
   props: {
     title: String
@@ -33,7 +35,9 @@ export default class JimmyComponent extends Vue {
   public toggleUnit() { this.scale.toggleUnit() }
   public toggleMode() { this.scale.toggleMode() }
   public toggleTimer() { this.scale.toggleTimer() }
-
+  public setGramm() { this.scale.setUnit(WeightUnit.GRAMM) }
+  public setTimerMode() { this.scale.setMode(WeightMode.TIMER_SCALE) }
+  
   disconnect (): void { this.scale.disconnect() }
   connect (): void {
     const bt = (navigator as any)?.bluetooth

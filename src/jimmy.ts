@@ -2,7 +2,7 @@ type Event = any;
 type Device = any;
 type BluetoothCharacteristic = any;
 
-export enum WeightUnit { GRAM = 'g', OUNCE = 'oz' }
+export enum WeightUnit { GRAMM = 'g', OUNCE = 'oz' }
 export enum WeightMode { SCALE_ONLY = 0x01, TIMER_SCALE = 0x02, POUR_OVER = 0x03, ESPRESSO_1 = 0x04, ESPRESSO_2 = 0x05, ESPRESSO_3 = 0x06 }
 
 export default class Jimmy {
@@ -13,7 +13,7 @@ export default class Jimmy {
 
     private device?: Device = undefined;
 
-    private weightCharacteristic: BluetoothCharacteristic;
+    private statusCharacteristic: BluetoothCharacteristic;
     private commandCharacteristic: BluetoothCharacteristic;
 
     static suuid_hiroiajimmy = "06c31822-8682-4744-9211-febc93e3bece";
@@ -32,7 +32,7 @@ export default class Jimmy {
             return null;
         });
         console.log('Getting Weight Characteristic ...');
-        this.weightCharacteristic = await service.getCharacteristic(Jimmy.cuuid_hiroiajimmy_status).catch(async (e: Event) => {
+        this.statusCharacteristic = await service.getCharacteristic(Jimmy.cuuid_hiroiajimmy_status).catch(async (e: Event) => {
             console.log('FAILED: ' + e);
             return null;
         });
@@ -42,9 +42,9 @@ export default class Jimmy {
         });
         
         console.log('Subscribing ...');
-        this.weightCharacteristic.addEventListener('characteristicvaluechanged', (e: Event) => this.notification_callback(e));
+        this.statusCharacteristic.addEventListener('characteristicvaluechanged', (e: Event) => this.parseStatusUpdate(e));
 
-        this.weightCharacteristic.startNotifications().catch(async (e: Event) => {
+        this.statusCharacteristic.startNotifications().catch(async (e: Event) => {
             console.log('FAILED: ' + e);
             return null;
         });
@@ -58,40 +58,16 @@ export default class Jimmy {
         this.mode = undefined;
     }
 
-    public get weightFormatted() : string {
+    get weightFormatted() : string {
         if (this.weight === undefined) return '-'
         
         return `${this.weight} ${this.unit}`
     }    
 
-    public get modeFormatted() : string {
+    get modeFormatted() : string {
         if (this.mode === undefined) return '-'
         
         return `${WeightMode[this.mode]}`
-    }    
-
-    notification_callback(event: Event) {
-        const buf = new Uint8Array(event.target.value.buffer);
-        const mode = buf[0];
-        const sign = buf[6];
-        const msw = buf[5];
-        const lsw = buf[4];
-        let weight = 256 * msw + lsw;
-
-        if (sign === 255) // negative weight
-            weight = (65536-weight) *- 1;
-
-        if (mode > 0x08) {
-            this.unit = WeightUnit.OUNCE;
-            this.weight = weight / 1000;
-            this.mode = (mode - 0x08)
-        } else {
-            this.unit = WeightUnit.GRAM;
-            this.weight = weight / 10;
-            this.mode = mode;
-        }
-
-         // console.log(`m: ${mode} w: ${this.weightFormatted}`);
     }
 
     tare() {
@@ -118,6 +94,20 @@ export default class Jimmy {
         this.send(toggle);
     }
 
+    setUnit(unit: WeightUnit) {
+        if (this.unit !== unit) {
+            this.toggleUnit();
+            setTimeout(() => this.setUnit(unit), 500);
+        }
+    }
+
+    setMode(mode: WeightMode) {
+        if (this.mode !== mode) {
+            this.toggleMode();
+            setTimeout(() => this.setMode(mode), 500);
+        }
+    }
+
     private send(cmd: number[]) {
         this.commandCharacteristic.writeValueWithResponse(new Uint8Array(cmd)).catch(async (e: Event) => {
             console.log('FAILED: ' + e);
@@ -125,4 +115,30 @@ export default class Jimmy {
         });
     }
 
+    private parseStatusUpdate(event: Event) {
+        const buf = new Uint8Array(event.target.value.buffer);
+        const mode = buf[0];
+        const sign = buf[6];
+        const msw = buf[5];
+        const lsw = buf[4];
+        
+        // timer state is also in buffer, but currently not read by this implemenation
+        
+        let weight = 256 * msw + lsw;
+
+        if (sign === 255) // negative weight
+            weight = (65536-weight) *- 1;
+
+        if (mode > 0x08) {
+            this.unit = WeightUnit.OUNCE;
+            this.weight = weight / 1000;
+            this.mode = (mode - 0x08)
+        } else {
+            this.unit = WeightUnit.GRAMM;
+            this.weight = weight / 10;
+            this.mode = mode;
+        }
+
+         // console.log(`m: ${mode} w: ${this.weightFormatted}`);
+    }
 }
